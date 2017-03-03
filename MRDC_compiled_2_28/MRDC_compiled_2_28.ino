@@ -12,21 +12,6 @@ USB Usb;
 XBOXRECV Xbox(&Usb);
 
 //Motor**********************************************************************
-////back right
-//const int en1 = 2;
-//const int dir1 = 25;
-//
-////front right
-//const int en2 = 3;
-//const int dir2 = 22;
-//
-////back left
-//const int en3 = 4;
-//const int dir3 = 23;
-//
-////front left
-//const int en4 = 5;
-//const int dir4 = 24;
 
 //front left
 const int en1 = 2;
