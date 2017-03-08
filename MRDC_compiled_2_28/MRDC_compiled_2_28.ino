@@ -1,5 +1,6 @@
 const float pi = 3.141596;
-const int led = 13;
+
+#include <Servo.h>
 
 //Xbox Controller **********************************************************************
 #include <XBOXRECV.h>
@@ -23,11 +24,25 @@ const int dir2 = 22;
 
 //back left
 const int en3 = 4;
-const int dir3 = 25;
+const int dir3 = 27;
 
 //back right
 const int en4 = 5;
 const int dir4 = 24;
+
+//5th one (hopper movement)
+const int en5 = 6;
+const int dir5 = 53;
+
+
+//6th one (arm)
+const int en6 = 7;
+const int dir6 = 52;
+
+//Servos*****************************************************************
+Servo wall;
+const int wall_pin = 8;
+bool wall_state; //setting wall state to 1 to indicate up
 
 //if RT or LT is pressed
 int stateR2;
@@ -45,6 +60,19 @@ void setup() {
 
   pinMode(en4, OUTPUT);
   pinMode(dir4, OUTPUT);
+
+  pinMode(en5, OUTPUT);
+  pinMode(dir5, OUTPUT);
+
+  pinMode(en6, OUTPUT);
+  pinMode(dir6, OUTPUT);
+
+  pinMode(wall_pin, OUTPUT);
+
+  wall.attach(wall_pin, 900, 2100);
+  wall.write(0); //set servo to initial position
+  wall_state = 1; //set state to 1
+  
 
   // enable diagnostic output
   Serial.println("\n\n\n");
@@ -75,6 +103,19 @@ void loop() {
 
   move_all_motors();
 
+  move_hopper(stateL2 - stateR2);
+//  Serial.println(stateR2 - stateL2);
+//  release_wall();
+//  delay(1000);
+//wall.write(0);
+//delay(1000);
+//wall.write(180);
+//delay(1000);
+//  if (Xbox.getButtonClick(A)) {
+//    release_wall();
+//  }
+//  Serial.println(wall_state);
+  
 }
 
 

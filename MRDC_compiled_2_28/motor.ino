@@ -106,6 +106,26 @@ void move_motor4(int spd) {
   }
 }
 
+void move_hopper(int spd) {
+  if (spd >= 0) {
+    analogWrite(en5, spd);
+    digitalWrite(dir5, HIGH);
+  } else if (spd < 0) {
+    analogWrite(en5, -spd);
+    digitalWrite(dir5, LOW);
+  }
+}
+
+void move_arm(int spd) {
+  if (spd >= 0) {
+    analogWrite(en6, spd);
+    digitalWrite(dir6, HIGH);
+  } else if (spd < 0) {
+    analogWrite(en6, -spd);
+    digitalWrite(dir6, LOW);
+  }
+}
+
 
 
 
