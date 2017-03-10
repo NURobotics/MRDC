@@ -9,6 +9,7 @@ const float pi = 3.141596;
 #include <spi4teensy3.h>
 #include <SPI.h>
 #endif
+
 USB Usb;
 XBOXRECV Xbox(&Usb);
 
@@ -23,8 +24,8 @@ const int en2 = 3;
 const int dir2 = 22;
 
 //back left
-const int en3 = 4;
-const int dir3 = 27;
+const int en3 = 11;
+const int dir3 = 29;
 
 //back right
 const int en4 = 5;
@@ -32,12 +33,12 @@ const int dir4 = 24;
 
 //5th one (hopper movement)
 const int en5 = 6;
-const int dir5 = 53;
+const int dir5 = 36;
 
 
 //6th one (arm)
 const int en6 = 7;
-const int dir6 = 52;
+const int dir6 = 37;
 
 //Servos*****************************************************************
 Servo wall;
@@ -72,7 +73,7 @@ void setup() {
   wall.attach(wall_pin, 900, 2100);
   wall.write(0); //set servo to initial position
   wall_state = 1; //set state to 1
-  
+
 
   // enable diagnostic output
   Serial.println("\n\n\n");
@@ -91,31 +92,38 @@ void setup() {
 
 void loop() {
 
-  stateL2 = Xbox.getButtonPress(L2);
-  stateR2 = Xbox.getButtonPress(R2);
+
 
 
   Usb.Task();
-  //    if (Xbox.XboxReceiverConnected) {
-  //      Serial.println(Xbox.getAnalogHat(RightHatY));
-  //      Serial.println(Xbox.getAnalogHat(RightHatX));
-  //      }
-
-  move_all_motors();
-
-  move_hopper(stateL2 - stateR2);
-//  Serial.println(stateR2 - stateL2);
-//  release_wall();
-//  delay(1000);
-//wall.write(0);
-//delay(1000);
-//wall.write(180);
-//delay(1000);
-//  if (Xbox.getButtonClick(A)) {
-//    release_wall();
+//  if (Xbox.XboxReceiverConnected) {
+//
+//
+//
 //  }
-//  Serial.println(wall_state);
-  
+
+      stateL2 = Xbox.getButtonPress(L2);
+    stateR2 = Xbox.getButtonPress(R2);
+
+    move_all_motors();
+
+    move_hopper(stateR2 - stateL2);
+
+    if (Xbox.getButtonClick(A)) {
+      release_wall();
+    }
+
+
+  //  Serial.println(stateR2 - stateL2);
+  //  release_wall();
+  //  delay(1000);
+  //wall.write(0);
+  //delay(1000);
+  //wall.write(180);
+  //delay(1000);
+
+  //  Serial.println(wall_state);
+
 }
 
 
