@@ -6,6 +6,5 @@ void release_wall() {
     wall.write(0);
     wall_state = 1;
   }
-  
 }
 
