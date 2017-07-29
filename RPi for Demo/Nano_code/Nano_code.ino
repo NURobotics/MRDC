@@ -1,8 +1,6 @@
-const float pi=3.14159;
-
 #include <Servo.h>
 
-// For an Arduino Nano
+// Arduino nano taking control signals from a Raspberry Pi
 
 // Motor pins ***********************************************************
 
@@ -37,17 +35,11 @@ bool wall_state;
 char type = 'A';
 
 int motor1 = 0;
-int dir1 = 0;
 int motor2 = 0;
-int dir2 = 0;
 int motor3 = 0;
-int dir3 = 0;
 int motor4 = 0;
-int dir4 = 0;
 
-int dir = 0;
 int spd = 0;
-bool new_control = false;
 
 void setup() {
   pinMode(en1, OUTPUT);
@@ -79,86 +71,95 @@ void setup() {
 void loop() {
   if (Serial.available()>0) {
     type = Serial.read();
+    
     if (type == 'D') {
+      
       Serial.println(type); // echo to Pi
-      motor1 = Serial.read();
-      dir1 = Serial.read();
-      motor2 = Serial.read();
-      dir2 = Serial.read();
-      motor3 = Serial.read();
-      dir3 = Serial.read();
-      motor4 = Serial.read();
-      dir4 = Serial.read();
+      motor1 = Serial.parseInt();
+      motor2 = Serial.parseInt();
+      motor3 = Serial.parseInt();
+      motor4 = Serial.parseInt();
 
-      move_motor1(motor1, dir1);
-      move_motor2(motor2, dir2);
-      move_motor3(motor3, dir3);
-      move_motor4(motor4, dir4);
+      Serial.println(motor1);
+      Serial.println(motor2);
+      Serial.println(motor3);
+      Serial.println(motor4);
+
+      move_motor1(motor1);
+      move_motor2(motor2);
+      move_motor3(motor3);
+      move_motor4(motor4);
 
       Serial.println("Done");
+      
     } else if (type == 'H') {
-      Serial.println(type); // echo to Pi
-      dir = Serial.read();
-      spd = Serial.read();
-      move_hopper(spd, dir);  
-      Serial.println("Done");  
+      
+      Serial.println(type); // echo to P
+      spd = Serial.parseInt();
+      
+      Serial.println(spd);
+      
+      move_hopper(spd); 
+       
+      Serial.println("Done"); 
+       
     } else if (type == 'W') {
+      
       Serial.println(type); // echo to Pi
+      
       release_wall();
+      
       Serial.println("Done");
     }
   }
 }
 
-void move_motor1(int spd, int dir) {
-  if (dir == 1) {
+void move_motor1(int spd) {
+  if (spd>0) {
     analogWrite(en1, spd);
     digitalWrite(ph1, HIGH);
   } else {
-    analogWrite(en1, spd);
+    analogWrite(en1, -spd);
     digitalWrite(ph1, LOW);
   }
 }
 
-
-void move_motor2(int spd, int dir) {
-  if (dir == 1) {
+void move_motor2(int spd) {
+  if (spd>0) {
     analogWrite(en2, spd);
     digitalWrite(ph2, HIGH);
   } else {
-    analogWrite(en2, spd);
+    analogWrite(en2, -spd);
     digitalWrite(ph2, LOW);
   }
 }
 
-
-void move_motor3(int spd, int dir) {
-  if (dir == 1) {
+void move_motor3(int spd) {
+  if (spd>0) {
     analogWrite(en3, spd);
     digitalWrite(ph3, HIGH);
   } else {
-    analogWrite(en3, spd);
+    analogWrite(en3, -spd);
     digitalWrite(ph3, LOW);
   }
 }
 
-
-void move_motor4(int spd, int dir) {
-  if (dir == 1) {
+void move_motor4(int spd) {
+  if (spd>0) {
     analogWrite(en4, spd);
     digitalWrite(ph4, HIGH);
   } else {
-    analogWrite(en4, spd);
+    analogWrite(en4, -spd);
     digitalWrite(ph4, LOW);
   }
 }
 
-void move_hopper(int spd, int dir) {
-  if (dir == 1) {
+void move_hopper(int spd) {
+  if (spd>0) {
     analogWrite(en5, spd);
     digitalWrite(ph5, HIGH);
   } else {
-    analogWrite(en5, spd);
+    analogWrite(en5, -spd);
     digitalWrite(ph5, LOW);
   }
 }
