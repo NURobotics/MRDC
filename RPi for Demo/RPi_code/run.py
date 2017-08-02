@@ -5,8 +5,6 @@ import sys
 import math
 import os
 import numpy as np
-import analog
-import heading
 
 
 class NURCbot:
@@ -17,10 +15,6 @@ class NURCbot:
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
         GPIO.setup(12,GPIO.OUT)
-
-        self.mcp = analog.Analog()
-
-        self.sense = heading.Heading()
 
         self.data_status = False
 
