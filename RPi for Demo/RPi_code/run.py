@@ -4,11 +4,7 @@ import XboxController
 import sys
 import math
 import os
-from pybrain.tools.shortcuts import buildNetwork
-from pybrain.datasets import SupervisedDataSet
-from pybrain.supervised.trainers import BackpropTrainer
 import numpy as np
-import pickle
 import analog
 import heading
 
