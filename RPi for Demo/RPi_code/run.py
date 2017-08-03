@@ -51,20 +51,32 @@ class NURCbot:
         self.running = True
 
         self.ser.open()
+        print(self.ser.readline())
 
     def WallCallBack(self,value):
         msg = 'W'
         self.ser.write(str.encode(msg))
+        print(self.ser.readline())
+        print(self.ser.readline())
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
         msg = 'H,{}'.format(value)
         self.ser.write(str.encode(msg))
+        print(self.ser.readline())
+        print(self.ser.readline())
+        print(self.ser.readline())
 
     def DriveCallBack(self,value):
         # figure out motor speeds
         msg = 'D,{},{},{},{}'.format(100,100,100,100)
         self.ser.write(str.encode(msg))
+        print(self.ser.readline())
+        print(self.ser.readline())
+        print(self.ser.readline())
+        print(self.ser.readline())
+        print(self.ser.readline())
+        print(self.ser.readline())
 
     def stop(self):
         #GPIO.cleanup()
@@ -88,11 +100,11 @@ if __name__ == '__main__':
     #Ctrl C
     except KeyboardInterrupt:
         bot.xboxCont.stop()
-        bot.ser.close()
         # GPIO.cleanup()
         print("User cancelled")
 
     #Error
     except:
+        bot.xboxCont.stop()
         print("Unexpected error:", sys.exc_info()[0])
         raise
