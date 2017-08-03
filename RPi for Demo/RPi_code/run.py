@@ -5,6 +5,7 @@ import sys
 import math
 import os
 import numpy as np
+import serial
 
 
 class NURCbot:
@@ -21,6 +22,10 @@ class NURCbot:
         self.data = list()
         self.collecting = False
 
+        self.ser = serial.Serial()
+        self.ser.baudrate = 115200
+        self.ser.port = 'COM9'
+
         #setup controller values
         self.state = 0
 
@@ -32,27 +37,33 @@ class NURCbot:
             invertYAxis = False)
 
         #setup call backs ### NEED CALLBACKS FOR DRIVING, WALL, AND HOPPER: send state value over serial port and do motor control math
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.A, self.aButtonCallBack)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.BACK, self.backButton)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBY, self.LthumbY)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBY, self.RthumbY)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.A, self.WallCallBack) # wall servo
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTRIGGER, self.HopperCallBack) # hopper window motor
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.HopperCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBY, self.DriveCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBX, self.DriveCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBY, self.DriveCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.DriveCallBack)
 
         #start the controller
         self.xboxCont.start()
 
         self.running = True
 
-        ### SETUP SERIAL PORT HERE
+        self.ser.open()
 
     #call back funtions for left thumb stick
 
     ### DEFINE THREE CALLBACKS: DRIVING, WALL, HOPPER
-   #  def aButtonCallBack(self,value):
-   # #     self.data_status = not self.data_status
-   #      self.motor_collect()
-   #
-   #  def backButton(self, value):
-   #      self.stop()
+    def WallCallBack(self,value):
+   #     self.data_status = not self.data_status
+        self.ser.write('W')
+
+    def HopperCallBack(self,value):
+        self.ser.write('H')
+
+    def DriveCallBack(self,value):
+        self.ser.write('D')
    #
    #  def LthumbY(self,value):
    #      self.motor1.setVelocity(value)
@@ -67,6 +78,7 @@ class NURCbot:
     def stop(self):
         #GPIO.cleanup()
         self.xboxCont.stop()
+        self.ser.close()
         self.running = False
 
 
@@ -78,13 +90,14 @@ if __name__ == '__main__':
         #create class
         bot = NURCBot()
         while bot.running:
-           ### MONITOR XBOX CONTROLLER IN INFINITE LOOP
+            time.sleep(1)
 
         GPIO.cleanup()
 
     #Ctrl C
     except KeyboardInterrupt:
         bot.xboxCont.stop()
+        bot.ser.close()
         GPIO.cleanup()
         print "User cancelled"
 

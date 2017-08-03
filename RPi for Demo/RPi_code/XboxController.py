@@ -100,7 +100,7 @@ class XboxController(threading.Thread):
                       PyGameAxis.LTHUMBY: XboxControls.LTHUMBY,
                       PyGameAxis.RTHUMBX: XboxControls.RTHUMBX,
                       PyGameAxis.RTHUMBY: XboxControls.RTHUMBY}
-    
+
     #map between pygame axis (trigger) ids and xbox control ids
     TRIGGERCONTROLMAP = {PyGameAxis.RTRIGGER: XboxControls.RTRIGGER,
                          PyGameAxis.LTRIGGER: XboxControls.LTRIGGER}
@@ -117,7 +117,7 @@ class XboxController(threading.Thread):
                         PyGameButtons.XBOX: XboxControls.XBOX,
                         PyGameButtons.LEFTTHUMB: XboxControls.LEFTTHUMB,
                         PyGameButtons.RIGHTTHUMB: XboxControls.RIGHTTHUMB}
-                        
+
     #setup xbox controller class
     def __init__(self,
                  controllerCallBack = None,
@@ -128,7 +128,7 @@ class XboxController(threading.Thread):
 
         #setup threading
         threading.Thread.__init__(self)
-        
+
         #persist values
         self.running = False
         self.controllerCallBack = controllerCallBack
@@ -258,14 +258,14 @@ class XboxController(threading.Thread):
 
     #start the controller
     def _start(self):
-        
+
         self.running = True
-        
+
         #run until the controller is stopped
         while(self.running):
             #react to the pygame events that come from the xbox controller
             for event in pygame.event.get():
-                #thumb sticks, trigger buttons                    
+                #thumb sticks, trigger buttons
                 if event.type == JOYAXISMOTION:
                     #is this axis on our xbox controller
                     if event.axis in self.AXISCONTROLMAP:
@@ -279,7 +279,7 @@ class XboxController(threading.Thread):
                         #update the control value
                         self.updateControlValue(self.TRIGGERCONTROLMAP[event.axis],
                                                 self._sortOutTriggerValue(event.value))
-                        
+
                 #d pad
                 elif event.type == JOYHATMOTION:
                     #update control value
@@ -292,7 +292,7 @@ class XboxController(threading.Thread):
                         #update control value
                         self.updateControlValue(self.BUTTONCONTROLMAP[event.button],
                                                 self._sortOutButtonValue(event.type))
-        
+
     #stops the controller
     def stop(self):
         self.running = False
@@ -303,7 +303,7 @@ class XboxController(threading.Thread):
         if self.controlValues[control] != value:
             self.controlValues[control] = value
             self.doCallBacks(control, value)
-    
+
     #calls the call backs if necessary
     def doCallBacks(self, control, value):
         #call the general callback
@@ -312,12 +312,12 @@ class XboxController(threading.Thread):
         #has a specific callback been setup?
         if control in self.controlCallbacks:
             self.controlCallbacks[control](value)
-            
+
     #used to add a specific callback to a control
     def setupControlCallback(self, control, callbackFunction):
         # add callback to the dictionary
         self.controlCallbacks[control] = callbackFunction
-                
+
     #scales the axis values, applies the deadzone
     def _sortOutAxisValue(self, value, yAxis = False):
         #invert yAxis
@@ -341,21 +341,21 @@ class XboxController(threading.Thread):
         #if the button is down its 1, if the button is up its 0
         value = 1 if eventType == JOYBUTTONDOWN else 0
         return value
-    
+
 #tests
 if __name__ == '__main__':
 
     #generic call back
     def controlCallBack(xboxControlId, value):
-        print "Control Id = {}, Value = {}".format(xboxControlId, value)
+        print("Control Id = {}, Value = {}", xboxControlId, value)
 
     #specific callbacks for the left thumb (X & Y)
     def leftThumbX(xValue):
-        print "LX {}".format(xValue)
+        print("LX {}", xValue)
     def leftThumbY(yValue):
-        print "LY {}".format(yValue)
+        print("LY {}", yValue)
 
-    #setup xbox controller, set out the deadzone and scale, also invert the Y Axis (for some reason in Pygame negative is up - wierd! 
+    #setup xbox controller, set out the deadzone and scale, also invert the Y Axis (for some reason in Pygame negative is up - weird!
     xboxCont = XboxController(controlCallBack, deadzone = 30, scale = 100, invertYAxis = True)
 
     #setup the left thumb (X & Y) callbacks
@@ -365,19 +365,19 @@ if __name__ == '__main__':
     try:
         #start the controller
         xboxCont.start()
-        print "xbox controller running"
+        print("xbox controller running")
         while True:
             time.sleep(1)
 
     #Ctrl C
     except KeyboardInterrupt:
-        print "User cancelled"
-    
-    #error        
+        print("User cancelled")
+
+    #error
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error:", sys.exc_info()[0])
         raise
-        
+
     finally:
         #stop the controller
         xboxCont.stop()
