@@ -61,15 +61,25 @@ class NURCbot:
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
-        msg = 'H,{}'.format(value)
+        ltrig = self.xboxCont.LTRIGGER
+        rtrig = self.xboxCont.RTRIGGER
+        msg = 'H,{}'.format(rtrig-ltrig)
         self.ser.write(str.encode(msg))
         print(self.ser.readline())
         print(self.ser.readline())
         print(self.ser.readline())
 
     def DriveCallBack(self,value):
-        # figure out motor speeds
-        msg = 'D,{},{},{},{}'.format(100,100,100,100)
+        rot = self.xboxCont.RTHUMBX
+        strafe = self.xboxCont.LTHUMBX
+        drive = self.xboxCont.LTHUMBY
+
+        motor1 = -drive + strafe - rot
+        motor2 = -drive - strafe + rot
+        motor3 = -drive - strafe - rot
+        motor4 = -drive + strafe + rot
+
+        msg = 'D,{},{},{},{}'.format(motor1, motor2, motor3, motor4)
         self.ser.write(str.encode(msg))
         print(self.ser.readline())
         print(self.ser.readline())
