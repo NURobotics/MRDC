@@ -1,4 +1,4 @@
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO
 import time
 import XboxController
 import sys
@@ -6,6 +6,7 @@ import math
 import os
 import numpy as np
 import serial
+import string
 
 
 class NURCbot:
@@ -13,9 +14,9 @@ class NURCbot:
     def __init__(self):
 
         #setup gpio ### DO WE NEED THIS? -> WALL MOTOR AND SERVO?? BETTER TO BE BOTH SERVOS?
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setwarnings(False)
-        GPIO.setup(12,GPIO.OUT)
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setwarnings(False)
+        # GPIO.setup(12,GPIO.OUT)
 
         self.data_status = False
 
@@ -24,17 +25,16 @@ class NURCbot:
 
         self.ser = serial.Serial()
         self.ser.baudrate = 115200
-        self.ser.port = 'COM9'
+        self.ser.port = 'COM4'
 
         #setup controller values
         self.state = 0
 
         #create xbox controller class ### ENSURE THAT THESE INITIAL VALUES ARE CORRECT
         self.xboxCont = XboxController.XboxController(
-            joystickNo = 0,
-            deadzone = 0.1,
-            scale = 1,
-            invertYAxis = False)
+            deadzone = 30,
+            scale = 100,
+            invertYAxis = True)
 
         #setup call backs ### NEED CALLBACKS FOR DRIVING, WALL, AND HOPPER: send state value over serial port and do motor control math
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.A, self.WallCallBack) # wall servo
@@ -52,28 +52,19 @@ class NURCbot:
 
         self.ser.open()
 
-    #call back funtions for left thumb stick
-
-    ### DEFINE THREE CALLBACKS: DRIVING, WALL, HOPPER
     def WallCallBack(self,value):
-   #     self.data_status = not self.data_status
-        self.ser.write('W')
+        msg = 'W'
+        self.ser.write(str.encode(msg))
 
     def HopperCallBack(self,value):
-        self.ser.write('H')
+        # figure out hopper speed (positive down?)
+        msg = 'H,{}'.format(value)
+        self.ser.write(str.encode(msg))
 
     def DriveCallBack(self,value):
-        self.ser.write('D')
-   #
-   #  def LthumbY(self,value):
-   #      self.motor1.setVelocity(value)
-   #  #   if self.data_status:
-   #      self.file.write(str(time.time()) + ", " + "left, " + str(value)  + "\n")
-   #
-   #  def RthumbY(self,value):
-   #      self.motor2.setVelocity(value)
-   #  #   if self.data_status:
-   #      self.file.write(str(time.time()) + ", " + "right, " + str(value) + "\n")
+        # figure out motor speeds
+        msg = 'D,{},{},{},{}'.format(100,100,100,100)
+        self.ser.write(str.encode(msg))
 
     def stop(self):
         #GPIO.cleanup()
@@ -88,20 +79,20 @@ if __name__ == '__main__':
     print ("started")
     try:
         #create class
-        bot = NURCBot()
+        bot = NURCbot()
         while bot.running:
             time.sleep(1)
 
-        GPIO.cleanup()
+        # GPIO.cleanup()
 
     #Ctrl C
     except KeyboardInterrupt:
         bot.xboxCont.stop()
         bot.ser.close()
-        GPIO.cleanup()
-        print "User cancelled"
+        # GPIO.cleanup()
+        print("User cancelled")
 
     #Error
     except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error:", sys.exc_info()[0])
         raise
