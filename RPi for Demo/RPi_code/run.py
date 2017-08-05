@@ -32,8 +32,8 @@ class NURCbot:
 
         #create xbox controller class ### ENSURE THAT THESE INITIAL VALUES ARE CORRECT
         self.xboxCont = XboxController.XboxController(
-            deadzone = 30,
-            scale = 100,
+            deadzone = 5,
+            scale = 255,
             invertYAxis = True)
 
         #setup call backs ### NEED CALLBACKS FOR DRIVING, WALL, AND HOPPER: send state value over serial port and do motor control math
@@ -64,7 +64,9 @@ class NURCbot:
         # figure out hopper speed (positive down?)
         # ltrig = self.xboxCont.LTRIGGER
         # rtrig = self.xboxCont.RTRIGGER
-        msg = 'H,{}'.format(self.xboxCont.RTHUMBX)  #rtrig-ltrig)
+        spd = self.xboxCont.RTHUMBX
+        if (abs(spd)<20): spd = 0
+        msg = 'H,{}'.format(spd)  #rtrig-ltrig)
         print(msg)
         self.ser.write(str.encode(msg))
         # print(self.ser.readline())
@@ -77,9 +79,21 @@ class NURCbot:
         drive = self.xboxCont.LTHUMBY
 
         motor1 = -drive + strafe - rot
+        if (motor1>255): motor1 = 255
+        if (motor1<-255): motor1 = -255
+        if (abs(motor1)<30): motor1 = 0
         motor2 = -drive - strafe + rot
+        if (motor2>255): motor2 = 255
+        if (motor2<-255): motor2 = -255
+        if (abs(motor2)<30): motor1 = 0
         motor3 = -drive - strafe - rot
+        if (motor3>255): motor3 = 255
+        if (motor3<-255): motor3 = -255
+        if (abs(motor3)<30): motor1 = 0
         motor4 = -drive + strafe + rot
+        if (motor4>255): motor4 = 255
+        if (motor4<-255): motor4 = -255
+        if (abs(motor4)<30): motor1 = 0
 
         msg = 'D,{},{},{},{}'.format(motor1, motor2, motor3, motor4)
         print(msg)
