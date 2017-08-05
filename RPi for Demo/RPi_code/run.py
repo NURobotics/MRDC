@@ -25,24 +25,24 @@ class NURCbot:
 
         self.ser = serial.Serial()
         self.ser.baudrate = 115200
-        self.ser.port = 'COM4'
+        self.ser.port = '/dev/ttyUSB0'
 
         #setup controller values
         self.state = 0
 
         #create xbox controller class ### ENSURE THAT THESE INITIAL VALUES ARE CORRECT
         self.xboxCont = XboxController.XboxController(
-            deadzone = 5,
+            deadzone = 20,
             scale = 255,
             invertYAxis = True)
 
         #setup call backs ### NEED CALLBACKS FOR DRIVING, WALL, AND HOPPER: send state value over serial port and do motor control math
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.A, self.WallCallBack) # wall servo
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTRIGGER, self.DriveCallBack) # hopper window motor
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.DriveCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTRIGGER, self.HopperCallBack) # hopper window motor
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.HopperCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBY, self.DriveCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBX, self.DriveCallBack)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.HopperCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.DriveCallBack)
 
         #start the controller
         self.xboxCont.start()
@@ -55,26 +55,26 @@ class NURCbot:
     def WallCallBack(self,value):
         if (self.xboxCont.A == 1):
             msg = 'W'
-            print(msg)
+            #print(msg)
             self.ser.write(str.encode(msg))
             # print(self.ser.readline())
             # print(self.ser.readline())
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
-        # ltrig = self.xboxCont.LTRIGGER
-        # rtrig = self.xboxCont.RTRIGGER
-        spd = self.xboxCont.RTHUMBX
+        ltrig = self.xboxCont.LTRIGGER
+        rtrig = self.xboxCont.RTRIGGER
+        spd =  rtrig-ltrig 
         if (abs(spd)<20): spd = 0
         msg = 'H,{}'.format(spd)  #rtrig-ltrig)
-        print(msg)
+        #print(msg)
         self.ser.write(str.encode(msg))
         # print(self.ser.readline())
         # print(self.ser.readline())
         # print(self.ser.readline())
 
     def DriveCallBack(self,value):
-        rot = self.xboxCont.RTRIGGER - self.xboxCont.LTRIGGER #self.xboxCont.RTHUMBX
+        rot = self.xboxCont.RTHUMBX
         strafe = self.xboxCont.LTHUMBX
         drive = self.xboxCont.LTHUMBY
 
@@ -96,7 +96,7 @@ class NURCbot:
         if (abs(motor4)<30): motor1 = 0
 
         msg = 'D,{},{},{},{}'.format(motor1, motor2, motor3, motor4)
-        print(msg)
+        #print(msg)
         self.ser.write(str.encode(msg))
         # print(self.ser.readline())
         # print(self.ser.readline())
@@ -116,22 +116,32 @@ class NURCbot:
 
 if __name__ == '__main__':
     print ("started")
-    try:
-        #create class
-        bot = NURCbot()
-        while bot.running:
-            pass
+    time.sleep(5)
+    while True:
+        try:
+            print("Trying to connect...")
+            #create class
+            bot = NURCbot()
+            while bot.running:
+                pass
 
-        # GPIO.cleanup()
+            # GPIO.cleanup()
 
-    #Ctrl C
-    except KeyboardInterrupt:
-        bot.xboxCont.stop()
-        # GPIO.cleanup()
-        print("User cancelled")
+        #Ctrl C
+        except KeyboardInterrupt:
+            bot.xboxCont.stop()
+            # GPIO.cleanup()
+            print("User cancelled")
+            raise
 
-    #Error
-    except:
-        bot.xboxCont.stop()
-        print("Unexpected error:", sys.exc_info()[0])
-        raise
+        # Joystick not connected
+        except:
+            print("Joystick not connected")
+            raise
+            
+
+        #Error
+        #except:
+            #bot.xboxCont.stop()
+            #print("Unexpected error:", sys.exc_info()[0])
+            #raise
