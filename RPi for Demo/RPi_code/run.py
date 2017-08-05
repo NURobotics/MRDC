@@ -42,7 +42,6 @@ class NURCbot:
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.HopperCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBY, self.DriveCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBX, self.DriveCallBack)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBY, self.DriveCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.DriveCallBack)
 
         #start the controller
