@@ -107,7 +107,7 @@ if __name__ == '__main__':
         #create class
         bot = NURCbot()
         while bot.running:
-            time.sleep(1)
+            pass
 
         # GPIO.cleanup()
 
