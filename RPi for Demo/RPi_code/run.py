@@ -55,19 +55,21 @@ class NURCbot:
 
     def WallCallBack(self,value):
         msg = 'W'
+        print(msg)
         self.ser.write(str.encode(msg))
-        print(self.ser.readline())
-        print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
         ltrig = self.xboxCont.LTRIGGER
         rtrig = self.xboxCont.RTRIGGER
         msg = 'H,{}'.format(rtrig-ltrig)
+        print(msg)
         self.ser.write(str.encode(msg))
-        print(self.ser.readline())
-        print(self.ser.readline())
-        print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
 
     def DriveCallBack(self,value):
         rot = self.xboxCont.RTHUMBX
@@ -80,13 +82,14 @@ class NURCbot:
         motor4 = -drive + strafe + rot
 
         msg = 'D,{},{},{},{}'.format(motor1, motor2, motor3, motor4)
+        print(msg)
         self.ser.write(str.encode(msg))
-        print(self.ser.readline())
-        print(self.ser.readline())
-        print(self.ser.readline())
-        print(self.ser.readline())
-        print(self.ser.readline())
-        print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
+        # print(self.ser.readline())
 
     def stop(self):
         #GPIO.cleanup()
