@@ -38,11 +38,11 @@ class NURCbot:
 
         #setup call backs ### NEED CALLBACKS FOR DRIVING, WALL, AND HOPPER: send state value over serial port and do motor control math
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.A, self.WallCallBack) # wall servo
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTRIGGER, self.HopperCallBack) # hopper window motor
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.HopperCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTRIGGER, self.DriveCallBack) # hopper window motor
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTRIGGER, self.DriveCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBY, self.DriveCallBack)
         self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.LTHUMBX, self.DriveCallBack)
-        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.DriveCallBack)
+        self.xboxCont.setupControlCallback(self.xboxCont.XboxControls.RTHUMBX, self.HopperCallBack)
 
         #start the controller
         self.xboxCont.start()
@@ -62,9 +62,9 @@ class NURCbot:
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
-        ltrig = self.xboxCont.LTRIGGER
-        rtrig = self.xboxCont.RTRIGGER
-        msg = 'H,{}'.format(rtrig-ltrig)
+        # ltrig = self.xboxCont.LTRIGGER
+        # rtrig = self.xboxCont.RTRIGGER
+        msg = 'H,{}'.format(self.xboxCont.RTHUMBX)  #rtrig-ltrig)
         print(msg)
         self.ser.write(str.encode(msg))
         # print(self.ser.readline())
@@ -72,7 +72,7 @@ class NURCbot:
         # print(self.ser.readline())
 
     def DriveCallBack(self,value):
-        rot = self.xboxCont.RTHUMBX
+        rot = self.xboxCont.RTRIGGER - self.xboxCont.LTRIGGER #self.xboxCont.RTHUMBX
         strafe = self.xboxCont.LTHUMBX
         drive = self.xboxCont.LTHUMBY
 
