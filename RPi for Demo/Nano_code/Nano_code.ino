@@ -74,34 +74,34 @@ void loop() {
     
     if (type == 'D') {
       
-      Serial.println(type); // echo to Pi
+//      Serial.println(type); // echo to Pi
       motor1 = Serial.parseInt();
       motor2 = Serial.parseInt();
       motor3 = Serial.parseInt();
       motor4 = Serial.parseInt();
 
-      Serial.println(motor1);
-      Serial.println(motor2);
-      Serial.println(motor3);
-      Serial.println(motor4);
+//      Serial.println(motor1);
+//      Serial.println(motor2);
+//      Serial.println(motor3);
+//      Serial.println(motor4);
 
       move_motor1(motor1);
       move_motor2(motor2);
       move_motor3(motor3);
       move_motor4(motor4);
 
-      Serial.println("Done");
+//      Serial.println("Done");
       
     } else if (type == 'H') {
       
       Serial.println(type); // echo to P
       spd = Serial.parseInt();
       
-      Serial.println(spd);
+//      Serial.println(spd);
       
       move_hopper(spd); 
        
-      Serial.println("Done"); 
+//      Serial.println("Done"); 
        
     } else if (type == 'W') {
       
@@ -109,7 +109,7 @@ void loop() {
       
       release_wall();
       
-      Serial.println("Done");
+//      Serial.println("Done");
     }
   }
 }
