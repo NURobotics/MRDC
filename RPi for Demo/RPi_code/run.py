@@ -54,11 +54,12 @@ class NURCbot:
         print(self.ser.readline())
 
     def WallCallBack(self,value):
-        msg = 'W'
-        print(msg)
-        self.ser.write(str.encode(msg))
-        # print(self.ser.readline())
-        # print(self.ser.readline())
+        if (self.xboxCont.A == 1):
+            msg = 'W'
+            print(msg)
+            self.ser.write(str.encode(msg))
+            # print(self.ser.readline())
+            # print(self.ser.readline())
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
