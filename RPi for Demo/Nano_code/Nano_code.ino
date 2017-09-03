@@ -65,7 +65,7 @@ void setup() {
   wall_state = 1; // set state to 1
 
   Serial.begin(115200);
-  Serial.println("Format: <A,0,0,0,0>");
+//  Serial.println("Format: <A,0,0,0,0>");
 }
 
 //===========
@@ -81,10 +81,10 @@ void loop() {
         // change motor speeds based on command_type
         if (command_type == 'D'){
           
-          Serial.println(newSpeeds[0]);
-          Serial.println(newSpeeds[1]);
-          Serial.println(newSpeeds[2]);
-          Serial.println(newSpeeds[3]);
+//          Serial.println(newSpeeds[0]);
+//          Serial.println(newSpeeds[1]);
+//          Serial.println(newSpeeds[2]);
+//          Serial.println(newSpeeds[3]);
 
           move_motor1(newSpeeds[0]);
           move_motor2(newSpeeds[1]);
@@ -93,13 +93,13 @@ void loop() {
                     
         } else if (command_type == 'H') {
           
-          Serial.println(newSpeeds[0]);
+//          Serial.println(newSpeeds[0]);
 
           move_hopper(newSpeeds[0]);
           
         } else if (command_type == 'W') {
           
-          Serial.println("wall");
+//          Serial.println("wall");
 
           release_wall();
           
