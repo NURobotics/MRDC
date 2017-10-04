@@ -60,11 +60,11 @@ void setup() {
 
   pinMode(wall_pwm, OUTPUT);
 
-  wall.attach(wall_pwm, 900, 2100);
-  wall.write(0); // set servo to initial position
+  wall.attach(wall_pwm);
+  wall.write(70); // set servo to initial position
   wall_state = 1; // set state to 1
 
-  Serial.begin(115200);
+  Serial.begin(9600);
 //  Serial.println("Format: <A,0,0,0,0>");
 }
 
@@ -230,10 +230,10 @@ void move_hopper(int spd) {
 
 void release_wall() {
   if(wall_state == 1) { //wall is up, pull it down
-    wall.write(180);
+    wall.write(90);
     wall_state = 0;
   } else {
-    wall.write(0);
+    wall.write(70);
     wall_state = 1;
   }
 }
