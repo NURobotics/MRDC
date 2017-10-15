@@ -238,11 +238,11 @@ class XboxController(threading.Thread):
     #setup pygame
     def _setupPygame(self, joystickNo):
         # set SDL to use the dummy NULL video driver, so it doesn't need a windowing system.
-        os.environ["SDL_VIDEODRIVER"] = "dummy"
+        os.putenv('DISPLAY', ':0.0')#os.environ["SDL_VIDEODRIVER"] = "dummy"
         # init pygame
         pygame.init()
         # create a 1x1 pixel screen, its not used so it doesnt matter
-        screen = pygame.display.set_mode((1, 1))
+        pygame.display.init()#screen = pygame.display.set_mode((1, 1))
         # init the joystick control
         pygame.joystick.init()
         # how many joysticks are there

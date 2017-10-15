@@ -17,22 +17,26 @@ class NURCbot:
         # GPIO.setmode(GPIO.BCM)
         # GPIO.setwarnings(False)
         # GPIO.setup(12,GPIO.OUT)
-
+        print("initializing...")
+        time.sleep(1)
         self.data_status = False
 
         self.data = list()
         self.collecting = False
 
         self.ser = serial.Serial()
-        self.ser.baudrate = 115200
+        self.ser.baudrate = 9600
         self.ser.port = '/dev/ttyUSB0'
+
+	# wrapper index for drive callback
+	self.ind = 0
 
         #setup controller values
         self.state = 0
 
         #create xbox controller class ### ENSURE THAT THESE INITIAL VALUES ARE CORRECT
         self.xboxCont = XboxController.XboxController(
-            deadzone = 20,
+            deadzone = 50,
             scale = 255,
             invertYAxis = True)
 
@@ -50,15 +54,17 @@ class NURCbot:
         self.running = True
 
         self.ser.open()
-        print(self.ser.readline())
+        print('Serial port is open')
+       # print(self.ser.readline())
 
     def WallCallBack(self,value):
         if (self.xboxCont.A == 1):
-            msg = 'W'
-            #print(msg)
-            self.ser.write(str.encode(msg))
-            # print(self.ser.readline())
-            # print(self.ser.readline())
+            msg = '<W,0,0,0,0>'
+            print(msg)
+            self.ser.write(msg)
+            self.ser.flush()
+            #print(self.ser.readline())
+            #print(self.ser.readline())
 
     def HopperCallBack(self,value):
         # figure out hopper speed (positive down?)
@@ -66,38 +72,47 @@ class NURCbot:
         rtrig = self.xboxCont.RTRIGGER
         spd =  rtrig-ltrig 
         if (abs(spd)<20): spd = 0
-        msg = 'H,{}'.format(spd)  #rtrig-ltrig)
-        #print(msg)
-        self.ser.write(str.encode(msg))
+        msg = '<H,{},0,0,0>'.format(int(spd))  #rtrig-ltrig)
+        print(msg)
+	self.ser.write(msg)
+	self.ser.flush()
+        
         # print(self.ser.readline())
         # print(self.ser.readline())
         # print(self.ser.readline())
 
     def DriveCallBack(self,value):
+	self.ind += 1
+
         rot = self.xboxCont.RTHUMBX
         strafe = self.xboxCont.LTHUMBX
         drive = self.xboxCont.LTHUMBY
 
         motor1 = -drive + strafe - rot
-        if (motor1>255): motor1 = 255
-        if (motor1<-255): motor1 = -255
-        if (abs(motor1)<30): motor1 = 0
+        if (motor1>100): motor1 = 100
+        if (motor1<-100): motor1 = -100
+        if (abs(motor1)<70): motor1 = 0
         motor2 = -drive - strafe + rot
-        if (motor2>255): motor2 = 255
-        if (motor2<-255): motor2 = -255
-        if (abs(motor2)<30): motor1 = 0
+        if (motor2>100): motor2 = 100
+        if (motor2<-100): motor2 = -100
+        if (abs(motor2)<70): motor2 = 0
         motor3 = -drive - strafe - rot
-        if (motor3>255): motor3 = 255
-        if (motor3<-255): motor3 = -255
-        if (abs(motor3)<30): motor1 = 0
+        if (motor3>100): motor3 = 100
+        if (motor3<-100): motor3 = -100
+        if (abs(motor3)<70): motor3 = 0
         motor4 = -drive + strafe + rot
-        if (motor4>255): motor4 = 255
-        if (motor4<-255): motor4 = -255
-        if (abs(motor4)<30): motor1 = 0
+        if (motor4>100): motor4 = 100
+        if (motor4<-100): motor4 = -100
+        if (abs(motor4)<70): motor4 = 0
 
-        msg = 'D,{},{},{},{}'.format(motor1, motor2, motor3, motor4)
-        #print(msg)
-        self.ser.write(str.encode(msg))
+        msg = '<D,{},{},{},{}>'.format(int(motor1), int(motor2), int(motor3), int(motor4))
+   
+        if ((self.ind == 2)): # or (msg == '<D,0,0,0,0>')):
+	    self.ind = 0
+            print(msg)
+	    self.ser.write(msg)
+	    self.ser.flush()
+        
         # print(self.ser.readline())
         # print(self.ser.readline())
         # print(self.ser.readline())
@@ -116,14 +131,15 @@ class NURCbot:
 
 if __name__ == '__main__':
     print ("started")
-    time.sleep(5)
+    time.sleep(2)
     while True:
         try:
             print("Trying to connect...")
-            #create class
+            time.sleep(1)
+	    #create class
             bot = NURCbot()
             while bot.running:
-                pass
+                True
 
             # GPIO.cleanup()
 
